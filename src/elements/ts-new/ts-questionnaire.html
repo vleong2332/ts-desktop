@@ -1,0 +1,107 @@
+
+<link rel="import" href="../../components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../components/paper-button/paper-button.html">
+<link rel="import" href="../../components/iron-icons/iron-icons.html">
+<link rel="import" href="../../components/iron-icons/maps-icons.html">
+<link rel="import" href="../../components/paper-material/paper-material.html">
+
+<dom-module id="ts-questionnaire">
+
+    <style>
+    
+        :host {
+            display: flex;
+            flex-direction: column;
+            box-sizing: border-box;
+            margin-top: 60px;  /* 60px is the green header */
+            height: calc(100% - 60px);
+            background-color: var(--card-background-color);
+        }
+
+        .questions {
+            flex: 1 1 auto;
+        }
+
+        .actions {
+            flex: 0 0 62px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-top: 1px solid var(--border-color);
+        }
+
+        paper-button {
+            display: flex;
+            align-items: center;
+            min-width: 0;
+        }
+
+        #questionnaire {
+            display: flex;
+        }
+        
+
+
+    </style>
+
+    <template>
+
+        <div class="questions">
+        </div>
+
+        <div class="actions">
+            <paper-button class="btn btn-previous" on-tap="previous">
+                <iron-icon class="icn icn-prev" icon="icons:chevron-left"></iron-icon>
+            </paper-button>
+            <paper-button class="btn btn-cancel" on-tap="cancel">Cancel</paper-button>
+            <paper-button class="btn btn-next" on-tap="next">
+                <iron-icon class="icn icn-next" icon="icons:chevron-right"></iron-icon>
+            </paper-button>
+        </div>
+
+    </template>
+
+</dom-module>
+
+
+<script>
+
+    Polymer({
+
+        is: 'ts-questionnaire',
+
+        behaviors: [
+            Polymer.IronResizableBehavior,
+            Polymer.NeonAnimatableBehavior
+        ],
+
+        properties: {
+            selected: {
+                type: Number,
+                value: 0,
+                notify: true
+            },
+            newdata: {
+                type: Object,
+                value: {},
+                notify: true
+            },
+            importdata: {
+                type: Object,
+                value: {},
+                notify: true
+            }
+        },
+
+        ready: function() {
+
+        },
+
+        cancel: function () {
+            // this.animationConfig.exit.name = 'slide-right-animation';
+            this.selected = 0
+        },
+
+    });
+
+</script>

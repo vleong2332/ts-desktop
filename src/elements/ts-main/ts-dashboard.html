@@ -10,6 +10,7 @@
 <link rel="import" href="../ts-publish/ts-publish.html">
 <link rel="import" href="../ts-translate/ts-translate.html">
 <link rel="import" href="../ts-settings/ts-settings.html">
+<!-- <link rel="import" href="../ts-questionnaire/ts-questionnaire.html"> -->
 <link rel="import" href="./ts-terms.html">
 <link rel="import" href="./ts-repo-search.html">
 <link rel="import" href="./ts-import-options.html">
@@ -117,6 +118,7 @@
       <neon-animated-pages attr-for-selected="data-route" selected="{{route}}">
           <ts-home data-route="home" route="{{route}}" projectlist="[[projectlist]]"></ts-home>
           <ts-new data-route="new" route="{{route}}" importdata="{{importdata}}" projectlist="[[projectlist]]" currentuser="[[currentuser]]"></ts-new>
+          <!-- <ts-questionnaire data-route="questionnaire" route="{{questionnaire}}"></ts-questionnaire> -->
           <ts-translate data-route="translate" route="{{route}}" busy="{{busy}}" projectlist="[[projectlist]]" currentproject="{{currentproject}}" currentuser="[[currentuser]]"></ts-translate>
           <ts-publish data-route="publish" route="{{route}}" currentproject="{{currentproject}}" currentuser="[[currentuser]]"></ts-publish>
           <ts-settings data-route="settings" route="{{route}}"></ts-settings>
