@@ -90,11 +90,16 @@
                 type: Object,
                 value: {},
                 notify: true
+            },
+            questions: {
+                type: Array,
+                value: []
             }
         },
 
         ready: function() {
-
+            this.questions = App.questionnaire.questions;
+            console.log(this.questions);
         },
 
         cancel: function () {

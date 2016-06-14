@@ -73,6 +73,9 @@ process.stdout.write = console.log.bind(console);
     // setMsg('Loading Temporary...');
     // let Temporary = require('../js/temporary').Temporary;
 
+    setMsg('Loading Questionnaire...');
+    let Questionnaire = require('../js/questionnaire').Questionnaire;
+
     setMsg('Initializing...');
 
     // TODO: refactor this so we can just pass an object to the constructor
@@ -119,6 +122,10 @@ process.stdout.write = console.log.bind(console);
 
     let gitManager = (function () {
         return new GitManager();
+    })();
+
+    let questionnaire = (function() {
+        return new Questionnaire();
     })();
 
     // let temporary = (function() {
@@ -179,6 +186,8 @@ process.stdout.write = console.log.bind(console);
         dataManager: dataManager,
 
         gitManager: gitManager,
+
+        questionnaire: questionnaire,
 
         // temporary: temporary,
 
