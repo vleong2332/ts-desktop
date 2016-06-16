@@ -16,8 +16,8 @@ function Questionnaire(languageSlug) {
     // NOTE: What should we do if there's still no questionnaire at this point?
 
     function groupQuestions(questions) {
-        return _.reduce(questions, function(acc, val) {
-            val.depends_on === null ? acc.push([val]) : acc[acc.length - 1].push(val);
+        return _.reduce(questions, function(acc, question) {
+            question.depends_on === null ? acc.push([question]) : acc[acc.length - 1].push(question);
             return acc;
         }, []);
     }

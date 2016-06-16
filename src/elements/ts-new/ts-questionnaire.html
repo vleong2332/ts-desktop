@@ -47,6 +47,15 @@
     <template>
 
         <div class="questions">
+            <neon-animated-pages selected="{{step}}" exit-animation="slide-left-animation" entry-animation="slide-from-right-animation">
+                <template is="dom-repeat" items="[[questions]]" as="group">
+                    <div selected="{{step}}">
+                        <template is="dom-repeat" items="[[group]]" as="question">
+                            <p>{{question}}</p>
+                        </template>
+                    </div>
+                </template>
+            </neon-animated-pages>
         </div>
 
         <div class="actions">
@@ -94,6 +103,10 @@
             questions: {
                 type: Array,
                 value: []
+            },
+            step: {
+                type: Number,
+                value: 0
             }
         },
 
@@ -104,8 +117,16 @@
 
         cancel: function () {
             // this.animationConfig.exit.name = 'slide-right-animation';
-            this.selected = 0
+            this.set('selected', 0);
         },
+
+        next: function() {
+            (this.step < this.questions.length - 1) && this.step++;
+        },
+
+        previous: function() {
+            (this.step > 0) && this.step--;
+        }
 
     });
 
