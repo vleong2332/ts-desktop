@@ -4,6 +4,10 @@
 <link rel="import" href="../../components/iron-icons/iron-icons.html">
 <link rel="import" href="../../components/iron-icons/maps-icons.html">
 <link rel="import" href="../../components/paper-material/paper-material.html">
+<link rel="import" href="../../components/paper-input/paper-input.html">
+<link rel="import" href="../../components/paper-radio-button/paper-radio-button.html">
+<link rel="import" href="../../components/paper-radio-group/paper-radio-group.html">
+
 
 <dom-module id="ts-questionnaire">
 
@@ -16,10 +20,13 @@
             margin-top: 60px;  /* 60px is the green header */
             height: calc(100% - 60px);
             background-color: var(--card-background-color);
+            --paper-radio-button-unchecked-color: #444;
         }
 
         .questions {
             flex: 1 1 auto;
+            padding: 0 4rem;
+            overflow-y: auto;
         }
 
         .actions {
@@ -39,7 +46,51 @@
         #questionnaire {
             display: flex;
         }
-        
+
+        paper-input {
+            margin-top: 1.5rem;
+            --paper-input-container-label: {
+                font-size: 24px;
+            };
+            --paper-input-container-input: {
+                margin-top: 1rem;
+            }
+        }
+
+        input[required] {
+            font-weight: 500;
+        }
+
+        label.ts-questionnaire {
+            margin-top: 1.5rem;
+            padding-top: 0.5rem;
+            display: block;
+            color: #707070;
+            letter-spacing: 0.011em;
+        }
+
+        label.ts-questionnaire.error {
+            color: red;
+        }
+
+        paper-radio-group {
+            display: block;
+            margin-top: 0.1rem;
+        }
+
+        paper-radio-button:first-child {
+            padding-left: 0;
+        }
+
+        .radio-error-message {
+            display: none;
+            color: red;
+        }
+
+        .error .radio-error-message {
+            display: inline;
+        }
+
 
 
     </style>
@@ -47,14 +98,31 @@
     <template>
 
         <div class="questions">
-            <neon-animated-pages selected="{{step}}" exit-animation="slide-left-animation" entry-animation="slide-from-right-animation">
+            <neon-animated-pages selected="{{step}}">
+
                 <template is="dom-repeat" items="[[questions]]" as="group">
-                    <div selected="{{step}}">
+                    <div selected="{{step}}" class="question-group">
+
                         <template is="dom-repeat" items="[[group]]" as="question">
-                            <p>{{question}}</p>
+                            
+                            <template is="dom-if" if="{{_isStringInput(question.input_type)}}">
+                                <paper-input name="{{question.id}}" label="{{question.sort}}. {{question.text}}" always-float-label placeholder="{{question.help}}" required="{{question.required}}" error-message="Required" class="{{_isRequiredClass(question.required)}}"></paper-input>
+                            </template>
+
+                            <template is="dom-if" if="{{_isBooleanInput(question.input_type)}}">
+                                <label>{{question.sort}}. {{question.text}}</label>
+                                <paper-radio-group selected="" name="{{question.id}}" attr-for-selected="value" data-required="{{question.required}}">
+                                    <paper-radio-button name="{{question.id}}" value="yes">Yes</paper-radio-button>
+                                    <paper-radio-button name="{{question.id}}" value="no">No</paper-radio-button>
+                                    <p class="radio-error-message">Required</p>
+                                </paper-radio-group>
+                            </template>
+
                         </template>
+
                     </div>
                 </template>
+
             </neon-animated-pages>
         </div>
 
@@ -81,7 +149,8 @@
 
         behaviors: [
             Polymer.IronResizableBehavior,
-            Polymer.NeonAnimatableBehavior
+            Polymer.NeonAnimatableBehavior,
+            Polymer.IronValidatableBehavior
         ],
 
         properties: {
@@ -107,26 +176,69 @@
             step: {
                 type: Number,
                 value: 0
+            },
+            hasError: {
+                type: Boolean,
+                value: false
             }
         },
 
         ready: function() {
             this.questions = App.questionnaire.questions;
-            console.log(this.questions);
         },
 
         cancel: function () {
-            // this.animationConfig.exit.name = 'slide-right-animation';
             this.set('selected', 0);
         },
 
         next: function() {
-            (this.step < this.questions.length - 1) && this.step++;
+            (this.checkAnswers() && (this.step < this.questions.length - 1)) && this.step++;
         },
 
         previous: function() {
             (this.step > 0) && this.step--;
+        },
+
+        checkAnswers: function() {
+            var currentGroup = document.querySelector('.question-group.iron-selected'),
+                questions = Array.prototype.slice.call(currentGroup.querySelectorAll('paper-input, paper-radio-group')),
+                _this = this;
+            
+            return questions.every(function(q) {
+                var pass = (q.validate && q.validate())
+                    || (q.nodeName === 'PAPER-RADIO-GROUP' && (!q.dataRequired || q.dataRequired && q.selected))
+                    || false;
+                pass ? _this._hideError(q) : _this._showError(q);
+                return pass;
+            });
+        },
+
+        _showError: function(q) {
+            q.classList.add('error');
+            if (q.nodeName === 'PAPER-RADIO-GROUP') {
+                q.previousElementSibling.classList.add('error');
+            }
+        },
+
+        _hideError: function(q) {
+            q.classList.remove('error');
+            if (q.nodeName === 'PAPER-RADIO-GROUP') {
+                q.previousElementSibling.classList.remove('error');
+            }
+        },
+
+        _isStringInput: function(inputType) {
+            return inputType === 'string';
+        },
+
+        _isBooleanInput: function(inputType) {
+            return inputType === 'boolean';
+        },
+
+        _isRequiredClass: function(required) {
+            return required ? 'required' : '';
         }
+
 
     });
 

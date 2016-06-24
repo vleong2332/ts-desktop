@@ -15,7 +15,7 @@
                     "id": 0,
                     "required": true,
                     "text": "What do you call your language?",
-                    "help": "",
+                    "help": "Help text here",
                     "sort": 1,
                     "depends_on": null
                 },
