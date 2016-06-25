@@ -48,6 +48,16 @@
             cursor: pointer;
         }
 
+        .row.unavailable {
+            background: var(--border-color);
+            border-bottom: 1px solid var(--card-background-color);
+        }
+
+        .row.unavailable:hover {
+            background: var(--border-color);
+            border-bottom: 1px solid var(--card-background-color);
+        }
+
         .row:hover {
             background: var(--accent-color-light);
         }
@@ -79,14 +89,14 @@
 
     <template>
 
-        <div id="main" data-mode="existing" mode="{{mode}}">
+        <div id="main">
             <div id="header">
                 <input is="iron-input" id="input" bind-value="{{query}}" placeholder="Choose target language">
                 <paper-icon-button class="right" icon="search" on-tap="focussearch"></paper-icon-button>
             </div>
             <iron-list id="list" items="{{searchfilter(query,languagelist)}}" as="language">
                 <template>
-                    <div class="row" on-tap="store">
+                    <div class$="[[checkclass(language.id)]]" on-tap="store">
                         <div>
                             <span>[[language.name]]</span>
                             <span class="right">[[language.id]]</span>
@@ -105,7 +115,7 @@
 <script>
 
 ;(function (root) {
-  'use strict';
+   'use strict';
 
     Polymer({
         is: 'ts-language-menu',
@@ -130,6 +140,10 @@
                 type: Array,
                 value: []
             },
+            changedata: {
+                type: Object,
+                value: {}
+            },
             query: {
                 type: String,
                 value: ""
@@ -144,26 +158,62 @@
             this.$.input.focus();
         },
 
-        searchfilter: function (query, languagelist) {
-          let search = App.utils.startsWithBase.bind(null, query);
-
-          var bycode = languagelist.filter(function (language) {
-              return search(language.id);
-          });
-          var byname = languagelist.filter(function (language) {
-              return search(language.name);
-          });
-          var combined = bycode.concat(byname);
-
-          return combined.filter(function(item, index) {
-              return combined.indexOf(item) === index;
-          });
+        checkclass: function (id) {
+            return this.changedata.changing && this.changedata.oldmeta.target_language.id === id ? 'row unavailable' : 'row';
         },
+
+        searchfilter: function (query, languagelist) {
+            let search = App.utils.startsWithBase.bind(null, query);
+
+            var bycode = languagelist.filter(function (language) {
+                return search(language.id);
+            });
+            var byname = languagelist.filter(function (language) {
+                return search(language.name);
+            });
+            var combined = bycode.concat(byname);
+  
+            return combined.filter(function(item, index) {
+                return combined.indexOf(item) === index;
+            });
+        },
+
+        change: function () {
+            var mythis = this;
+            var targetDir = App.configurator.getValue('targetTranslationsDir');
+            mythis.changedata.newmeta = _.cloneDeep(mythis.changedata.oldmeta);
+            mythis.changedata.newmeta.target_language = mythis.newdata.language;
+            mythis.changedata.newmeta.unique_id = App.projectsManager.makeUniqueId(mythis.changedata.newmeta);
+            mythis.changedata.oldpaths = App.utils.makeProjectPaths(targetDir, mythis.changedata.oldmeta);
+            mythis.changedata.newpaths = App.utils.makeProjectPaths(targetDir, mythis.changedata.newmeta);
+  
+            return App.utils.fs.stat(mythis.changedata.newpaths.projectDir).then(App.utils.ret(true)).catch(App.utils.ret(false))
+                .then(function (exists) {
+                    mythis.changedata.exists = exists;
+                    if (exists) {
+                        mythis.fire('openconfirm');
+                    } else {
+                        mythis.firechange();
+                    }
+                });
+        },
+
+        firechange: function () {
+            var mythis = this;
+  
+            mythis.fire('iron-signal', {name: 'changeproject', data: mythis.changedata});
+            mythis.set('changedata.changing', false);
+            mythis.reset();
+        },    
 
         store: function (e) {
             this.set('newdata.language', e.model.language);
-
-            if (this.importdata.importing && this.importdata.project.slug) {
+  
+            if (this.changedata.changing) {
+                if (this.newdata.language.id !== this.changedata.oldmeta.target_language.id) {
+                    this.change();
+                }
+            } else if (this.importdata.importing && this.importdata.project.slug) {
                 this.set('newdata.project', this.importdata.project);
                 if (App.configurator.getUserSetting('glmode')) {
                     this.fire('iron-signal', {name: 'createtypes'});
@@ -172,21 +222,31 @@
                     this.set('newdata.typedata', {type: {id: "text", name: "Text"}, resource: {id: "reg", name: "Regular"}, format: "usfm", allowed: true});
                     this.fire('create');
                 }
+                this.reset();
             } else {
                 this.fire('iron-signal', {name: 'createprojects'});
                 this.set('selected', 1);
+                this.reset();
             }
+        },
+  
+        reset: function () {
             this.set('query', "");
             this.$.list.scrollTop = 0;
         },
-
-        gotoQuestionnaire: function() {
-            this.selected = 4;
+  
+        updateList: function () {
+            this.set('languagelist', App.dataManager.getTargetLanguages());
         },
 
+        gotoQuestionnaire: function() {
+            this.set('selected', 4);
+        },
+  
         ready: function () {
             this.set('languagelist', App.dataManager.getTargetLanguages());
         }
+  
     });
 
 })(window);
