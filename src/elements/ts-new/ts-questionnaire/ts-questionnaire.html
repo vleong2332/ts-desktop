@@ -146,28 +146,30 @@
         },
 
         next: function() {
-            if (this.validate() && (this.step < this.questions.length - 1)) {
-                this.step++;
-                this.set('firstStep', false);
-            }
-            (this.step === this.questions.length - 1) && this.set('lastStep', true);
+            (this.validate() && !this._isLastStep()) && this._updateSteps(true);
         },
 
         previous: function() {
-            if (this.step > 0) {
-                this.step--;
-                this.set('lastStep', false);
-            }
-            (this.step === 0) && this.set('firstStep', true);
+            !this._isFirstStep() && this._updateSteps(false);
         },
 
         validate: function() {
             return this.querySelector('.question-group.iron-selected').validate();
         },
 
-        disablePrevious: function() {
-
+        _updateSteps: function(forward) {
+            forward ? this.step++ : this.step--;
+            this.set('firstStep', this._isFirstStep());
+            this.set('lastStep', this._isLastStep());
         },
+
+        _isLastStep: function() {
+            return this.step === (this.questions.length - 1);
+        },
+
+        _isFirstStep: function() {
+            return this.step === 0;
+        }
 
     });
 
