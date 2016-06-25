@@ -13,7 +13,7 @@
     <template>
 
         <template is="dom-repeat" items="[[group]]" as="question">                
-            <ts-question question="{{question}}"></ts-question>
+            <ts-question qid="{{question.id}}" input-type="{{question.input_type}}" label="{{question.sort}}. {{question.text}}" required="{{question.required}}" help="{{question.help}}"" error-message="Required"></ts-question>
         </template>     
 
     </template>

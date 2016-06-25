@@ -35,14 +35,14 @@
 
     <template>
                             
-        <template is="dom-if" if="{{_isStringInput(question.input_type)}}">
-            <paper-input name="{{question.id}}" label="{{question.sort}}. {{question.text}}" always-float-label placeholder="{{question.help}}" required="{{question.required}}" error-message="Required" class="{{_isRequiredClass(question.required)}}"></paper-input>
+        <template is="dom-if" if="{{_isStringType(inputType)}}">
+            <paper-input name="{{qid}}" label="{{label}}" always-float-label placeholder="{{help}}" required="{{required}}" error-message="{{errorMessage}}" class="{{_isRequiredClass(required)}}"></paper-input>
         </template>
 
-        <template is="dom-if" if="{{_isBooleanInput(question.input_type)}}">
-            <ts-radio-group selected="" attr-for-selected="value" label="{{question.sort}}. {{question.text}}" required="{{question.required}}" error-message="Required" class="{{_isRequiredClass(question.required)}}">
-                <paper-radio-button name="{{question.id}}" value="yes">Yes</paper-radio-button>
-                <paper-radio-button name="{{question.id}}" value="no">No</paper-radio-button>
+        <template is="dom-if" if="{{_isBooleanType(inputType)}}">
+            <ts-radio-group selected="" attr-for-selected="value" label="{{label}}" required="{{required}}" error-message="{{errorMessage}}" class="{{_isRequiredClass(required)}}">
+                <paper-radio-button name="{{qid}}" value="yes">Yes</paper-radio-button>
+                <paper-radio-button name="{{qid}}" value="no">No</paper-radio-button>
             </paper-radio-group>
         </template>   
 
@@ -75,11 +75,11 @@
             return el.validate();
         },
 
-        _isStringInput: function(inputType) {
+        _isStringType: function(inputType) {
             return inputType === 'string';
         },
 
-        _isBooleanInput: function(inputType) {
+        _isBooleanType: function(inputType) {
             return inputType === 'boolean';
         },
 
