@@ -56,7 +56,7 @@
         </div>
 
         <div class="actions">
-            <paper-button class="btn btn-previous" on-tap="previous">
+            <paper-button class="btn btn-previous" on-tap="previous" disabled$="{{firstStep}}">
                 <iron-icon class="icn icn-prev" icon="icons:chevron-left"></iron-icon>
             </paper-button>
             <paper-button class="btn btn-cancel" on-tap="cancel">Cancel</paper-button>
@@ -104,6 +104,10 @@
             step: {
                 type: Number,
                 value: 0
+            },
+            firstStep: {
+                type: Boolean,
+                value: true,
             }
         },
 
@@ -116,16 +120,24 @@
         },
 
         next: function() {
-            (this.validate() && (this.step < this.questions.length - 1)) && this.step++;
+            if (this.validate() && (this.step < this.questions.length - 1)) {
+                this.step++;
+                this.set('firstStep', false);
+            }
         },
 
         previous: function() {
             (this.step > 0) && this.step--;
+            (this.step === 0) && this.set('firstStep', true);
         },
 
         validate: function() {
             return this.querySelector('.question-group.iron-selected').validate();
-        }
+        },
+
+        disablePrevious: function() {
+
+        },
 
     });
 
