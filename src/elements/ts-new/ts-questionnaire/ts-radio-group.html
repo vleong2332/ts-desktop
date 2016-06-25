@@ -1,0 +1,85 @@
+<dom-module id="ts-radio-group">
+
+    <style>
+
+        :host {
+            display: flex;
+            flex-direction: column;
+            --paper-radio-button-unchecked-color: #444;
+        }
+
+        :host.error .label{
+            color: red;
+        }
+
+        :host.error .error-message {
+            display: inline;
+        }
+
+        paper-radio-group, content {
+            display: flex;
+            flex-direction: row;
+        }
+
+        .label {
+            margin-top: 1.5rem;
+            padding-top: 0.5rem;
+            display: block;
+            color: #707070;
+            letter-spacing: 0.011em;
+        }
+
+        .error-message {
+            margin: 0;
+            display: none;
+            color: red;
+            font-size: 90%;
+        }
+
+    </style>
+
+    <template>
+
+        <label id="label" class="label">{{label}}</label>
+        <paper-radio-group id="radio-group" class="{{class}}" attr-for-selected="{{attrForSelected}}" selected="{{selected}}">
+            <content id="content"></content>
+            <p id="error-message" class="error-message">{{errorMessage}}</p>
+        </paper-radio-group>
+
+    </template>
+
+</dom-module>
+
+<script>
+
+    Polymer({
+
+        is: 'ts-radio-group',
+
+        behaviors: [
+            Polymer.IronFormElementBehavior,
+            Polymer.IronResizableBehavior,
+            Polymer.NeonAnimatableBehavior
+        ],
+
+        get selectedItem() {
+            return this.$['radio-group'].selectedItem;
+        },
+
+        validate: function() {
+            var valid = !this.required || (this.required && !!this.selectedItem);
+            valid ? this._hideError() : this._showError();
+            return valid;
+        },
+
+        _showError: function() {
+            this.classList.add('error');
+        },
+
+        _hideError: function() {
+            this.classList.remove('error');
+        }
+
+    });
+
+</script>

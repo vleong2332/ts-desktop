@@ -1,0 +1,53 @@
+<link rel="import" href="./ts-question.html">
+
+<dom-module id="ts-question-group">
+
+    <style>
+
+        :host {
+
+        }
+
+    </style>
+
+    <template>
+
+        <template is="dom-repeat" items="[[group]]" as="question">                
+            <ts-question question="{{question}}"></ts-question>
+        </template>     
+
+    </template>
+
+</dom-module>
+
+<script>
+
+    Polymer({
+        is: 'ts-question-group',
+
+        behaviors: [
+            Polymer.IronResizableBehavior,
+            Polymer.NeonAnimatableBehavior,
+        ],
+
+        properties: {
+            group: {
+                type: Array
+            }
+        },
+
+        ready: function() {
+
+        },
+
+        validate: function() {
+            var questions = Array.prototype.slice.call(this.querySelectorAll('ts-question'));
+
+            return questions.every(function(q) {
+                return q.validate();
+            });
+        }
+
+    });
+
+</script>
