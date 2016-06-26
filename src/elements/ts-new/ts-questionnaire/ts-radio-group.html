@@ -1,3 +1,5 @@
+<link rel="import" href="../../../components/paper-radio-group/paper-radio-group.html">
+
 <dom-module id="ts-radio-group">
 
     <style>
@@ -34,6 +36,7 @@
             display: none;
             color: red;
             font-size: 90%;
+            padding: 1rem;
         }
 
     </style>
@@ -57,7 +60,7 @@
         is: 'ts-radio-group',
 
         behaviors: [
-            Polymer.IronFormElementBehavior
+            Polymer.IronFormElementBehavior,
         ],
 
         get selectedItem() {
@@ -65,7 +68,7 @@
         },
 
         validate: function() {
-            var valid = !this.required || (this.required && !!this.selectedItem);
+            var valid = !this.required || (this.required && !!this.$['radio-group'].selectedItem);
             valid ? this._hideError() : this._showError();
             return valid;
         },

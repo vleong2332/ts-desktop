@@ -1,3 +1,6 @@
+<link rel="import" href="../../../components/paper-radio-button/paper-radio-button.html">
+<link rel="import" href="../../../components/paper-input/paper-input.html">
+
 <link rel="import" href="./ts-radio-group.html">
 
 <dom-module id="ts-question">
@@ -27,6 +30,10 @@
             margin-top: 0.1rem;
         }
 
+        paper-radio-button {
+            padding: 1rem;
+        }
+
         paper-radio-button:first-child {
             padding-left: 0;
         }
@@ -40,11 +47,11 @@
         </template>
 
         <template is="dom-if" if="{{_isBooleanType(inputType)}}">
-            <ts-radio-group selected="" attr-for-selected="value" label="{{label}}" required="{{required}}" error-message="{{errorMessage}}" class="{{_isRequiredClass(required)}}">
+            <ts-radio-group selected="" attr-for-selected="value" label="{{label}}" required="{{required}}" error-message="{{errorMessage}}" class="{{_isRequiredClass(required)}}" required="{{required}}">
                 <paper-radio-button name="{{qid}}" value="yes">Yes</paper-radio-button>
                 <paper-radio-button name="{{qid}}" value="no">No</paper-radio-button>
-            </paper-radio-group>
-        </template>   
+            </ts-radio-group>
+        </template>
 
     </template>
 
@@ -65,7 +72,7 @@
         },
 
         ready: function() {
-
+            console.log(this.qid);
         },
 
         validate: function() {

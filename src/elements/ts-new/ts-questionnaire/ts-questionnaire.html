@@ -3,9 +3,7 @@
 <link rel="import" href="../../../components/iron-icons/iron-icons.html">
 <link rel="import" href="../../../components/iron-icons/maps-icons.html">
 <link rel="import" href="../../../components/paper-material/paper-material.html">
-<link rel="import" href="../../../components/paper-input/paper-input.html">
-<link rel="import" href="../../../components/paper-radio-button/paper-radio-button.html">
-<link rel="import" href="../../../components/paper-radio-group/paper-radio-group.html">
+<link rel="import" href="../../../components/neon-animation/neon-animation.html">
 
 <link rel="import" href="./ts-question-group.html">
 
@@ -103,6 +101,7 @@
         </paper-button>
 
         <div class="content">
+
             <paper-material class="questions">
                 <div class="questions-title">
                     <h2 class="steps">Step <span>{{_baseOne(step)}}</span> of <span>{{_baseOne(questions.length)}}</span></h2>
@@ -115,10 +114,12 @@
                     </neon-animated-pages>
                 </div>
             </paper-material>
+
             <div class="actions">
                 <paper-button class="btn btn-cancel" raised on-tap="cancel">Cancel</paper-button>
                 <paper-button class="btn btn-submit" raised on-tap="submit" disabled$="{{!lastStep}}">Submit</paper-button>
             </div>
+
         </div>
 
         <paper-button class="btn btn-next" raised on-tap="next" disabled$="{{lastStep}}">
