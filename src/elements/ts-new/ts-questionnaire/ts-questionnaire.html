@@ -107,7 +107,7 @@
                     <h2 class="steps">Step <span>{{_baseOne(step)}}</span> of <span>{{_baseOne(questions.length)}}</span></h2>
                 </div>
                 <div class="questions-body">
-                    <neon-animated-pages selected="{{step}}">
+                    <neon-animated-pages selected="{{step}}" exit-animation="scale-down-animation" entry-animation="scale-up-animation">
                         <template is="dom-repeat" items="[[questions]]" as="group">
                             <ts-question-group class="question-group" selected="{{step}}" group="{{group}}"></ts-question-group>
                         </template>
