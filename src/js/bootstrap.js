@@ -71,6 +71,13 @@ process.stdout.write = console.log.bind(console);
     setMsg('Loading Utils...');
     let utils = require('../js/lib/utils');
 
+    // setMsg('Loading Temporary...');
+    // let Temporary = require('../js/temporary').Temporary;
+
+    setMsg('Loading Questionnaire...');
+    let Questionnaire = require('../js/questionnaire').Questionnaire;
+
+    setMsg('Initializing...');
     setMsg('Initializing configurator...');
 
     // TODO: refactor this so we can just pass an object to the constructor
@@ -138,6 +145,14 @@ process.stdout.write = console.log.bind(console);
         return new GitManager();
     })();
 
+    let questionnaire = (function() {
+        return new Questionnaire();
+    })();
+
+    // let temporary = (function() {
+    //     return new Temporary();
+    // })();
+
     let migrateManager = (function () {
         return new MigrateManager(configurator, gitManager);
     })();
@@ -190,6 +205,10 @@ process.stdout.write = console.log.bind(console);
         dataManager: dataManager,
 
         gitManager: gitManager,
+
+        questionnaire: questionnaire,
+
+        // temporary: temporary,
 
         migrateManager: migrateManager,
 

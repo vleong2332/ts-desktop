@@ -1,0 +1,97 @@
+<link rel="import" href="../../../components/paper-radio-button/paper-radio-button.html">
+<link rel="import" href="../../../components/paper-input/paper-input.html">
+
+<link rel="import" href="./ts-radio-group.html">
+
+<dom-module id="ts-question">
+
+    <style>
+
+        :host {
+
+        }
+
+        paper-input {
+            margin-top: 1.5rem;
+            --paper-input-container-label: {
+                font-size: 24px;
+            };
+            --paper-input-container-input: {
+                margin-top: 1rem;
+            }
+        }
+
+        input[required] {
+            font-weight: 500;
+        }
+
+        ts-radio-group {
+            display: block;
+            margin-top: 0.1rem;
+        }
+
+        paper-radio-button {
+            padding: 1rem;
+        }
+
+        paper-radio-button:first-child {
+            padding-left: 0;
+        }
+
+    </style>
+
+    <template>
+                            
+        <template is="dom-if" if="{{_isStringType(inputType)}}">
+            <paper-input name="{{qid}}" label="{{label}}" always-float-label placeholder="{{help}}" required="{{required}}" error-message="{{errorMessage}}" class="{{_isRequiredClass(required)}}"></paper-input>
+        </template>
+
+        <template is="dom-if" if="{{_isBooleanType(inputType)}}">
+            <ts-radio-group selected="" attr-for-selected="value" label="{{label}}" required="{{required}}" error-message="{{errorMessage}}" class="{{_isRequiredClass(required)}}" required="{{required}}">
+                <paper-radio-button name="{{qid}}" value="yes">Yes</paper-radio-button>
+                <paper-radio-button name="{{qid}}" value="no">No</paper-radio-button>
+            </ts-radio-group>
+        </template>
+
+    </template>
+
+</dom-module>
+
+<script>
+
+    Polymer({
+        is: 'ts-question',
+
+        behaviors: [
+        ],
+
+        properties: {
+            question: {
+                type: Object
+            }
+        },
+
+        ready: function() {
+            console.log(this.qid);
+        },
+
+        validate: function() {
+            var el = this.querySelector('paper-input') || this.querySelector('ts-radio-group');
+            return el.validate();
+        },
+
+        _isStringType: function(inputType) {
+            return inputType === 'string';
+        },
+
+        _isBooleanType: function(inputType) {
+            return inputType === 'boolean';
+        },
+
+        _isRequiredClass: function(required) {
+            return required ? 'required' : '';
+        }
+
+    });
+
+</script>

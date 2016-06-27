@@ -1,0 +1,221 @@
+<link rel="import" href="../../../components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../../components/paper-button/paper-button.html">
+<link rel="import" href="../../../components/iron-icons/iron-icons.html">
+<link rel="import" href="../../../components/iron-icons/maps-icons.html">
+<link rel="import" href="../../../components/paper-material/paper-material.html">
+<link rel="import" href="../../../components/neon-animation/neon-animation.html">
+
+<link rel="import" href="./ts-question-group.html">
+
+
+<dom-module id="ts-questionnaire">
+
+    <style>
+    
+        :host {
+            display: flex;
+            flex-direction: row;
+            width: 80%;
+            margin: 0 auto;
+            box-sizing: border-box;
+        }
+
+        paper-button {
+            background-color: var(--card-background-color);
+            min-width: 0;
+        }
+
+        paper-material {
+            background-color: var(--card-background-color);
+        }
+
+        .btn-previous, .btn-next {
+            flex: 0 0 auto;
+            align-self: center;
+            margin: 0 1rem;
+            padding: 0.5rem;
+            border-radius: 50%;
+        }
+
+        .content {
+            flex: 1 1 auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .questions {
+            flex: 1 1 auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .questions div {
+            padding: 0 1.5rem;
+        }
+
+        .questions-title {
+            flex: 0 0 3.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        h2 {
+            margin: 0;
+        }
+
+        .questions-body {
+            flex: 1 1 auto;
+            overflow-y: auto;
+        }
+
+        .actions {
+            flex: 0 0 62px;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            margin: 0.5rem 0;
+        }
+
+        .btn-submit {
+            color: var(--reverse-text-color);
+            background-color: var(--primary-color);
+        }
+
+        .btn-submit[disabled] {
+            color: var(--disabled-text);
+            background-color: var(--disabled-button-bg);
+        }
+
+        .btn-submit, .btn-cancel {
+            margin: 0 0.5rem;
+        }
+
+    </style>
+
+    <template>
+
+        <paper-button class="btn btn-previous" raised on-tap="previous" disabled$="{{firstStep}}">
+            <iron-icon class="icn icn-prev" icon="icons:chevron-left"></iron-icon>
+        </paper-button>
+
+        <div class="content">
+
+            <paper-material class="questions">
+                <div class="questions-title">
+                    <h2 class="steps">Step <span>{{_baseOne(step)}}</span> of <span>{{_baseOne(questions.length)}}</span></h2>
+                </div>
+                <div class="questions-body">
+                    <neon-animated-pages selected="{{step}}" exit-animation="scale-down-animation" entry-animation="scale-up-animation">
+                        <template is="dom-repeat" items="[[questions]]" as="group">
+                            <ts-question-group class="question-group" selected="{{step}}" group="{{group}}"></ts-question-group>
+                        </template>
+                    </neon-animated-pages>
+                </div>
+            </paper-material>
+
+            <div class="actions">
+                <paper-button class="btn btn-cancel" raised on-tap="cancel">Cancel</paper-button>
+                <paper-button class="btn btn-submit" raised on-tap="submit" disabled$="{{!lastStep}}">Submit</paper-button>
+            </div>
+
+        </div>
+
+        <paper-button class="btn btn-next" raised on-tap="next" disabled$="{{lastStep}}">
+            <iron-icon class="icn icn-next" icon="icons:chevron-right"></iron-icon>
+        </paper-button>
+
+
+
+    </template>
+
+</dom-module>
+
+
+<script>
+
+    Polymer({
+
+        is: 'ts-questionnaire',
+
+        behaviors: [
+            Polymer.IronResizableBehavior,
+            Polymer.NeonAnimatableBehavior
+        ],
+
+        properties: {
+            selected: {
+                type: Number,
+                value: 0,
+                notify: true
+            },
+            newdata: {
+                type: Object,
+                value: {},
+                notify: true
+            },
+            importdata: {
+                type: Object,
+                value: {},
+                notify: true
+            },
+            questions: {
+                type: Array,
+                value: []
+            },
+            step: {
+                type: Number,
+                value: 0
+            },
+            firstStep: {
+                type: Boolean,
+                value: true
+            },
+            lastStep: {
+                type: Boolean,
+                value: false
+            }
+        },
+
+        ready: function() {
+            this.questions = App.questionnaire.questions;
+        },
+
+        cancel: function () {
+            this.set('selected', 0);
+        },
+
+        next: function() {
+            (this.validate() && !this._isLastStep()) && this._updateSteps(true);
+        },
+
+        previous: function() {
+            !this._isFirstStep() && this._updateSteps(false);
+        },
+
+        validate: function() {
+            return this.querySelector('.question-group.iron-selected').validate();
+        },
+
+        _updateSteps: function(forward) {
+            forward ? this.step++ : this.step--;
+            this.set('firstStep', this._isFirstStep());
+            this.set('lastStep', this._isLastStep());
+        },
+
+        _isLastStep: function() {
+            return this.step === (this.questions.length - 1);
+        },
+
+        _isFirstStep: function() {
+            return this.step === 0;
+        },
+
+        _baseOne: function(val) {
+            return parseInt(val) + 1;
+        }
+
+    });
+
+</script>
