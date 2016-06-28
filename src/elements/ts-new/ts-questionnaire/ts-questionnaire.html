@@ -60,7 +60,7 @@
             justify-content: center;
         }
 
-        h2 {
+        .questions-title h2 {
             margin: 0;
         }
 
@@ -104,7 +104,7 @@
 
             <paper-material class="questions">
                 <div class="questions-title">
-                    <h2 class="steps">Step <span>{{_baseOne(step)}}</span> of <span>{{_baseOne(questions.length)}}</span></h2>
+                    <h2 class="steps">Step <span>{{_baseOne(step)}}</span> of <span>{{questions.length}}</span></h2>
                 </div>
                 <div class="questions-body">
                     <neon-animated-pages selected="{{step}}" exit-animation="scale-down-animation" entry-animation="scale-up-animation">
@@ -146,21 +146,19 @@
 
         properties: {
             selected: {
-                type: Number,
-                value: 0,
                 notify: true
             },
             newdata: {
-                type: Object,
-                value: {},
                 notify: true
             },
             importdata: {
-                type: Object,
-                value: {},
                 notify: true
             },
             questions: {
+                type: Array,
+                value: []
+            },
+            aswers: {
                 type: Array,
                 value: []
             },
@@ -178,9 +176,17 @@
             }
         },
 
+        /*
+        ** Built-in API
+        */
+
         ready: function() {
             this.questions = App.questionnaire.questions;
         },
+
+        /*
+        ** Public API
+        */
 
         cancel: function () {
             this.set('selected', 0);
@@ -195,8 +201,22 @@
         },
 
         validate: function() {
-            return this.querySelector('.question-group.iron-selected').validate();
+            // return this.querySelector('.question-group.iron-selected').validate();
+
+            // IMPORTANT: DEBUGGING PURPOSE ONLY
+            return true;
         },
+
+        submit: function() {
+            var answersObj = this._getAnswers();
+            answersObj = App.questionnaire.sanitize(answersObj);
+            App.questionnaire.save(answersObj);
+        },
+
+
+        /*
+        ** Private API
+        */
 
         _updateSteps: function(forward) {
             forward ? this.step++ : this.step--;
@@ -214,6 +234,18 @@
 
         _baseOne: function(val) {
             return parseInt(val) + 1;
+        },
+
+        _getAnswers: function() {
+            var inputElements = this.querySelectorAll('paper-input, ts-radio-group'),
+                inputArray = Array.prototype.slice.call(inputElements),
+                answersObj = {};
+
+            inputArray.forEach(function(inputEl) {
+                answersObj[inputEl.name] = inputEl.value || inputEl.selected || "";
+            });
+
+            return answersObj;
         }
 
     });
