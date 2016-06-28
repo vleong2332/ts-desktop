@@ -149,6 +149,14 @@ function createAppMenus() {
                         var w = BrowserWindow.getFocusedWindow();
                         w && w.webContents.openDevTools();
                     }
+                },
+                {
+                    label: "Reload Window",
+                    accelerator: "CmdOrCtrl+R",
+                    click: function () {
+                        var w = BrowserWindow.getFocusedWindow();
+                        w && w.webContents.reload();
+                    }
                 }
             ]
         }
