@@ -35,13 +35,11 @@ function Questionnaire(languageSlug) {
 
         // Return the loaded questionnaire id
         get id() {
-            console.log('in id', questionnaire);
             return questionnaire && questionnaire['questionnaire_id'];
         },
 
         // Return the data_fields/language_data object from the questionnaire
         get dataFields() {
-            console.log('in dataFields', questionnaire);
             // return questionnaire && questionnaire['data-fields'];
             return questionnaire && questionnaire['language_data'];
         },
@@ -56,8 +54,16 @@ function Questionnaire(languageSlug) {
         },
 
         // Save user's answer and some other metadata as a file to be pushed later
-        save: function(answersObj) {
-            let _this = this;
+        save: function(user, answersObj) {
+            let _this = this,
+                date = new Date(),
+                timeStamp = date.getFullYear().toString() +
+                    App.utils.padZero(date.getMonth() + 1) +
+                    App.utils.padZero(date.getDate()) +
+                    App.utils.padZero(date.getHours()) +
+                    App.utils.padZero(date.getMinutes()) +
+                    App.utils.padZero(date.getSeconds());
+
             temp.newCode()
                 .then(function(tempCode) {
                     return {
@@ -66,8 +72,8 @@ function Questionnaire(languageSlug) {
                         data_fields: _this.dataFields,
                         questionnaire_id: _this.id,
                         app: 'ts-desktop',
-                        requester: '',
-                        submitted_at: Date.now(),
+                        requester: user,
+                        submitted_at: timeStamp,
                         answers: _.map(answersObj, function(answer, key) {
                             return {question_id: key, text: answer};
                         })

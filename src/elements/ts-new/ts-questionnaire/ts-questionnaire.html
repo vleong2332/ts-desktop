@@ -6,6 +6,7 @@
 <link rel="import" href="../../../components/neon-animation/neon-animation.html">
 
 <link rel="import" href="./ts-question-group.html">
+<link rel="import" href="./ts-questionnaire-feedback.html">
 
 
 <dom-module id="ts-questionnaire">
@@ -126,7 +127,7 @@
             <iron-icon class="icn icn-next" icon="icons:chevron-right"></iron-icon>
         </paper-button>
 
-
+        <ts-questionnaire-feedback></ts-questionnaire-feedback>
 
     </template>
 
@@ -153,6 +154,8 @@
             },
             importdata: {
                 notify: true
+            },
+            currentuser: {
             },
             questions: {
                 type: Array,
@@ -208,9 +211,10 @@
         },
 
         submit: function() {
-            var answersObj = this._getAnswers();
+            var user = this.currentuser.full_name || this.currentuser.username || '',
+                answersObj = this._getAnswers();
             answersObj = App.questionnaire.sanitize(answersObj);
-            App.questionnaire.save(answersObj);
+            App.questionnaire.save(user, answersObj);
         },
 
 
