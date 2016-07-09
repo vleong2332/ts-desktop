@@ -15,14 +15,19 @@
             margin-top: 1.5rem;
             --paper-input-container-label: {
                 font-size: 24px;
+                line-height: 26px;
             };
             --paper-input-container-input: {
                 margin-top: 1rem;
             }
         }
 
-        input[required] {
-            font-weight: 500;
+        paper-input.required {
+            --paper-input-container-label: {
+                font-size: 24px;
+                line-height: 26px;
+                font-weight: bold;
+            };
         }
 
         ts-radio-group {
@@ -43,11 +48,11 @@
     <template>
                             
         <template is="dom-if" if="{{_isStringType(inputType)}}">
-            <paper-input name="{{qid}}" label="{{label}}" always-float-label placeholder="{{help}}" required="{{required}}" error-message="{{errorMessage}}" class="{{_isRequiredClass(required)}}"></paper-input>
+            <paper-input name="{{qid}}" label="{{_buildLabel(sort, text, required)}}" always-float-label placeholder="{{help}}" required="{{required}}" error-message="{{errorMessage}}" class$="{{_isRequiredClass(required)}}"></paper-input>
         </template>
 
         <template is="dom-if" if="{{_isBooleanType(inputType)}}">
-            <ts-radio-group name="{{qid}}" selected="" attr-for-selected="value" label="{{label}}" required="{{required}}" error-message="{{errorMessage}}" class="{{_isRequiredClass(required)}}" required="{{required}}">
+            <ts-radio-group name="{{qid}}" selected="" attr-for-selected="value" label="{{_buildLabel(sort, text, required)}}" required="{{required}}" error-message="{{errorMessage}}" required="{{required}}" class$="{{_isRequiredClass(required)}}">
                 <paper-radio-button name="{{qid}}" value="true">Yes</paper-radio-button>
                 <paper-radio-button name="{{qid}}" value="false">No</paper-radio-button>
             </ts-radio-group>
@@ -66,13 +71,10 @@
         ],
 
         properties: {
-            question: {
-                type: Object
-            }
         },
 
         ready: function() {
-
+            console.log(this.sort, this.text, this.required);
         },
 
         validate: function() {
@@ -86,6 +88,10 @@
 
         _isBooleanType: function(inputType) {
             return inputType === 'boolean';
+        },
+
+        _buildLabel: function(sort, text, required) {
+            return sort + '. ' + text + (required ? ' *' : '');
         },
 
         _isRequiredClass: function(required) {

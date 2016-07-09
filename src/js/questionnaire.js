@@ -21,12 +21,12 @@ function Questionnaire(languageSlug) {
 
     function groupQuestions(questions) {
         // Group by 'depends_on' property
-        let reduced = _.reduce(questions, function(arr, question) {
+        let temp = _.reduce(questions, function(arr, question) {
             question.depends_on === null ? arr.push([question]) : arr[arr.length - 1].push(question);
             return arr;
         }, []);
         // Combine adjacent stand-alone questions in groups of three or less
-        return _.reduce(reduced, function(arr, group, index, reduced) {
+        return _.reduce(temp, function(arr, group, index) {
             let prev = index > 0 ? arr[arr.length -1] : null;
             prev !== null && group.length === 1 && prev.length < 3 ? prev.push(group[0]) : arr.push(group);
             return arr;
