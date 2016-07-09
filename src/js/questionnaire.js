@@ -20,9 +20,16 @@ function Questionnaire(languageSlug) {
     // NOTE: What should we do if there's still no questionnaire at this point?
 
     function groupQuestions(questions) {
-        return _.reduce(questions, function(acc, question) {
-            question.depends_on === null ? acc.push([question]) : acc[acc.length - 1].push(question);
-            return acc;
+        // Group by 'depends_on' property
+        let reduced = _.reduce(questions, function(arr, question) {
+            question.depends_on === null ? arr.push([question]) : arr[arr.length - 1].push(question);
+            return arr;
+        }, []);
+        // Combine adjacent stand-alone questions in groups of three or less
+        return _.reduce(reduced, function(arr, group, index, reduced) {
+            let prev = index > 0 ? arr[arr.length -1] : null;
+            prev !== null && group.length === 1 && prev.length < 3 ? prev.push(group[0]) : arr.push(group);
+            return arr;
         }, []);
     }
 
