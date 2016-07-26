@@ -35,6 +35,10 @@
             letter-spacing: 0.011em;
         }
 
+        label.disabled {
+            opacity: 0.33;
+        }
+
         .error-message {
             margin: 0;
             display: none;
@@ -47,7 +51,7 @@
 
     <template>
 
-        <label id="label" class="label">{{label}}</label>
+        <label id="label" class$="label {{_isDisabled(disabled)}}">{{label}}</label>
         <paper-radio-group id="radio-group" class="{{class}}" attr-for-selected="{{attrForSelected}}" selected="{{selected}}">
             <content id="content"></content>
             <p id="error-message" class="error-message">{{errorMessage}}</p>
@@ -83,6 +87,10 @@
 
         _hideError: function() {
             this.classList.remove('error');
+        },
+
+        _isDisabled: function(disabled) {
+            return disabled ? 'disabled' : '';
         }
 
     });
