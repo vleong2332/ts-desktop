@@ -146,7 +146,7 @@ process.stdout.write = console.log.bind(console);
     })();
 
     let questionnaire = (function() {
-        return new Questionnaire();
+        return new Questionnaire(configurator);
     })();
 
     // let temporary = (function() {

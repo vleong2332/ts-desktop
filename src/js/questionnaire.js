@@ -3,14 +3,15 @@
 'use strict';
 
 
-let _ = require('lodash'),
+let path = require('path'),
+    _ = require('lodash'),
     sanitizer = require('sanitizer'),
     uuid = require('node-uuid'),
     temp = require('./temporary'),
     utils = require('./lib/utils');
 
 
-function Questionnaire(languageSlug) {
+function Questionnaire(configurator, languageSlug) {
     
     languageSlug = languageSlug || 'en';
 
@@ -71,7 +72,7 @@ function Questionnaire(languageSlug) {
                     App.utils.padZero(date.getMinutes()) +
                     App.utils.padZero(date.getSeconds());
 
-            temp.newCode()
+            return temp.newCode()
                 .then(function(tempCode) {
                     return {
                         request_id: uuid.v1(),
@@ -86,7 +87,19 @@ function Questionnaire(languageSlug) {
                         })
                     };
                 })
-                .then(utils.log);
+                .then(function(data) {
+                    return utils.fs.mkdirs(configurator.getUserPath('datalocation', 'new_languages')).then(function() {
+                        return data;
+                    });
+                })
+                .then(function(data) {
+                    let filePath = path.join(configurator.getUserPath('datalocation', 'new_languages'), data.temp_code + '.json'),
+                        toBeWritten = JSON.stringify(data, null, 2);
+                        
+                    return utils.fs.writeFile(filePath, toBeWritten).then(function() {
+                        return data;
+                    });
+                });
         },
 
         // Submit questionnaire/answers file to door43 and tD
