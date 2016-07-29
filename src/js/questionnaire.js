@@ -64,6 +64,8 @@ function Questionnaire(configurator, languageSlug) {
         // Save user's answer and some other metadata as a file to be pushed later
         save: function(user, answersObj) {
             let _this = this,
+                dirPath = configurator.getUserPath('datalocation', 'new_languages'),
+                ext = '.json',
                 date = new Date(),
                 timeStamp = date.getFullYear().toString() +
                     App.utils.padZero(date.getMonth() + 1) +
@@ -88,16 +90,19 @@ function Questionnaire(configurator, languageSlug) {
                     };
                 })
                 .then(function(data) {
-                    return utils.fs.mkdirs(configurator.getUserPath('datalocation', 'new_languages')).then(function() {
+                    return utils.fs.mkdirs(dirPath).then(function() {
                         return data;
                     });
                 })
                 .then(function(data) {
-                    let filePath = path.join(configurator.getUserPath('datalocation', 'new_languages'), data.temp_code + '.json'),
+                    let filePath = path.join(dirPath, data.temp_code + ext),
                         toBeWritten = JSON.stringify(data, null, 2);
                         
                     return utils.fs.writeFile(filePath, toBeWritten).then(function() {
-                        return data;
+                        return {
+                            id: data.temp_code,
+                            name: data.answers[data.data_fields['ln']].text
+                        };
                     });
                 });
         },

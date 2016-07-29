@@ -212,9 +212,18 @@
 
         submit: function() {
             var user = this.currentuser.full_name || this.currentuser.username || '',
-                answersObj = this._getAnswers();
+                answersObj = this._getAnswers(),
+                _this = this;
+
             answersObj = App.questionnaire.sanitize(answersObj);
-            App.questionnaire.save(user, answersObj);
+
+            App.questionnaire.save(user, answersObj).then(function(data) {
+                _this._store(data.id, data.name);
+            });
+        },
+
+        reset: function() {
+            console.log('reset questionnaire not implemented');
         },
 
 
@@ -250,6 +259,22 @@
             });
 
             return answersObj;
+        },
+
+        _store: function(id, name) {
+            var language = {
+                id: id,
+                name: name,
+                direction: "ltr"
+            };
+
+            // NOTE: Language probably need to also be created in the database so that it will be
+            //    available next time from the list.
+
+            this.set('newdata.language', language);
+            this.fire('iron-signal', {name: 'createprojects'});
+            this.set('selected', 1);
+            this.reset();
         }
 
     });

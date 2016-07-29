@@ -112,7 +112,7 @@
             <ts-project-menu selected="{{selected}}" newdata="{{newdata}}" importdata="{{importdata}}" on-create="createproject"></ts-project-menu>
             <ts-book-menu selected="{{selected}}" newdata="{{newdata}}" on-create="createproject"></ts-book-menu>
             <ts-type-menu selected="{{selected}}" newdata="{{newdata}}" importdata="{{importdata}}" projectlist="[[projectlist]]" on-create="createproject"></ts-type-menu>
-            <ts-questionnaire selected="{{selected}}" currentuser="[[currentuser]]" newdata="{{newdata}}" importdata="{{importdata}}" on-create="createproject"></ts-questionnaire>
+            <ts-questionnaire selected="{{selected}}" newdata="{{newdata}}" importdata="{{importdata}}" changedata="[[changedata]]" on-create="createproject" currentuser="[[currentuser]]"></ts-questionnaire>
         </neon-animated-pages>
 
         <paper-dialog id="confirmimport" class="popup" modal="true" entry-animation="scale-up-animation" exit-animation="scale-down-animation">
