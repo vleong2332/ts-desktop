@@ -23,13 +23,25 @@ function Questionnaire(configurator, languageSlug) {
     function groupQuestions(questions) {
         // Group by 'depends_on' property
         let temp = _.reduce(questions, function(arr, question) {
-            question.depends_on === null ? arr.push([question]) : arr[arr.length - 1].push(question);
+            if (question.depends_on === null) {
+                arr.push([question]);
+            } else {
+                arr[arr.length - 1].push(question);
+            }
             return arr;
         }, []);
         // Combine adjacent stand-alone questions in groups of three or less
         return _.reduce(temp, function(arr, group, index) {
-            let prev = index > 0 ? arr[arr.length -1] : null;
-            prev !== null && group.length === 1 && prev.length < 3 ? prev.push(group[0]) : arr.push(group);
+            let prevGroup = index > 0 ? arr[arr.length -1] : null,
+                isAlone = group.length === 1,
+                prevHasRoom = prevGroup !== null && prevGroup.length < 3;
+
+            if (isAlone && prevHasRoom) {
+                prevGroup.push(group[0]);
+            } else {
+                arr.push(group);
+            }
+
             return arr;
         }, []);
     }
@@ -38,18 +50,18 @@ function Questionnaire(configurator, languageSlug) {
 
         // Return an array of question objects
         get questions() {
-            return questionnaire && groupQuestions(questionnaire.questions);
+            return questionnaire ? groupQuestions(questionnaire.questions) : undefined;
         },
 
         // Return the loaded questionnaire id
         get id() {
-            return questionnaire && questionnaire['questionnaire_id'];
+            return questionnaire ? questionnaire['questionnaire_id'] : undefined;
         },
 
         // Return the data_fields/language_data object from the questionnaire
         get dataFields() {
             // return questionnaire && questionnaire['data-fields'];
-            return questionnaire && questionnaire['language_data'];
+            return questionnaire ? questionnaire['language_data'] : undefined;
         },
 
         // Clean answers. Checkout https://github.com/theSmaw/Caja-HTML-Sanitizer/blob/master/test/test-sanitizer.js
