@@ -6,7 +6,6 @@
 <link rel="import" href="../../../components/neon-animation/neon-animation.html">
 
 <link rel="import" href="./ts-question-group.html">
-<link rel="import" href="./ts-questionnaire-feedback.html">
 
 
 <dom-module id="ts-questionnaire">
@@ -217,11 +216,19 @@
 
             App.questionnaire.save(user, answersObj).then(function(data) {
                 _this._store(data.id, data.name);
+                _this.reset();
             });
         },
 
         reset: function() {
-            console.log('reset questionnaire not implemented');
+            var questionGroups = Array.prototype.slice.call(this.querySelectorAll('.question-group'));
+
+            questionGroups.forEach(function(qg) {
+                qg.reset();
+            });
+            this.set('step', 0);
+            this.set('firstStep', this._isFirstStep());
+            this.set('lastStep', this._isLastStep());
         },
 
 
@@ -272,7 +279,6 @@
             this.set('newdata.language', language);
             this.fire('iron-signal', {name: 'createprojects'});
             this.set('selected', 1);
-            this.reset();
         }
 
     });

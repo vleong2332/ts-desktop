@@ -81,6 +81,11 @@
             return valid;
         },
 
+        reset: function() {
+            this.selected = '';
+            this.fire('change');
+        },
+
         _showError: function() {
             this.classList.add('error');
         },

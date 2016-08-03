@@ -44,6 +44,14 @@
             return questions.every(function(q) {
                 return q.validate();
             });
+        },
+
+        reset: function() {
+            var questions = Array.prototype.slice.call(this.querySelectorAll('ts-question'));
+            
+            return questions.forEach(function(q) {
+                q.reset();
+            });
         }
 
     });

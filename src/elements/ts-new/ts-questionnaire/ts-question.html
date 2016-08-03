@@ -86,10 +86,23 @@
             return el.validate();
         },
 
+        reset: function() {
+            var el = this.querySelector('paper-input');
+
+            if (el) {
+                el.value = '';
+                // Fire change event if other questions depend on this
+                !this.dependsOn && el.fire('change');
+            } else {
+                el = this.querySelector('ts-radio-group');
+                el.reset();
+            }
+        },
+
         _addListener: function(dependsOn) {
             var _this = this;
             document.getElementById(dependsOn).addEventListener('change', function(e) {
-                _this.disabled = e.target.value == '';
+                _this.disabled = !e.target.value;
             });
         },
 
