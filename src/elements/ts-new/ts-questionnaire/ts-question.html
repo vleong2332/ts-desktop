@@ -94,8 +94,7 @@
                 // Fire change event if other questions depend on this
                 !this.dependsOn && el.fire('change');
             } else {
-                el = this.querySelector('ts-radio-group');
-                el.reset();
+                this.querySelector('ts-radio-group').reset();
             }
         },
 

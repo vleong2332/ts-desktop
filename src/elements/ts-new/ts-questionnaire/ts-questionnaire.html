@@ -78,7 +78,7 @@
             margin: 0.5rem 0;
         }
 
-        .btn-submit {
+        .btn-submit, .btn-done {
             color: var(--reverse-text-color);
             background-color: var(--primary-color);
         }
@@ -104,20 +104,31 @@
 
             <paper-material class="questions">
                 <div class="questions-title">
-                    <h2 class="steps">Step <span>{{_baseOne(step)}}</span> of <span>{{questions.length}}</span></h2>
+                    <template is="dom-if" if="{{!finish}}">
+                        <h2 class="steps">Step <span>{{_baseOne(step)}}</span> of <span>{{questions.length}}</span></h2>
+                    </template>
+                    <template is="dom-if" if="{{finish}}">
+                        <h2 class="finish">Success!</span></h2>
+                    </template>
                 </div>
                 <div class="questions-body">
                     <neon-animated-pages selected="{{step}}" exit-animation="scale-down-animation" entry-animation="scale-up-animation">
                         <template is="dom-repeat" items="[[questions]]" as="group">
                             <ts-question-group class="question-group" selected="{{step}}" group="{{group}}"></ts-question-group>
                         </template>
+                        <div class="confirmation" selected="{{step}}">Your new language has been created. The questionnaire you filled out is saved and will be submitted when internet connection is available.</div>
                     </neon-animated-pages>
                 </div>
             </paper-material>
 
             <div class="actions">
-                <paper-button class="btn btn-cancel" raised on-tap="cancel">Cancel</paper-button>
-                <paper-button class="btn btn-submit" raised on-tap="submit" disabled$="{{!lastStep}}">Submit</paper-button>
+                <template is="dom-if" if="{{!finish}}">
+                    <paper-button class="btn btn-cancel" raised on-tap="cancel">Cancel</paper-button>
+                    <paper-button class="btn btn-submit" raised on-tap="submit" disabled$="{{!lastStep}}">Submit</paper-button>
+                </template>
+                <template is="dom-if" if="{{finish}}">
+                    <paper-button class="btn btn-done" raised on-tap="done">Continue</paper-button>
+                </template>
             </div>
 
         </div>
@@ -173,6 +184,10 @@
             lastStep: {
                 type: Boolean,
                 value: false
+            },
+            finish: {
+                type: Boolean,
+                value: false
             }
         },
 
@@ -216,8 +231,17 @@
 
             App.questionnaire.save(user, answersObj).then(function(data) {
                 _this._store(data.id, data.name);
-                _this.reset();
+                _this._updateSteps(true);
+                _this._setFinish(true);
+                // Disable the next and previous arrow buttons
+                _this.set('firstStep', true);
+                _this.set('lastStep', true);
             });
+        },
+
+        done: function() {
+            this.set('selected', 1);
+            this.reset();
         },
 
         reset: function() {
@@ -227,14 +251,19 @@
                 qg.reset();
             });
             this.set('step', 0);
-            this.set('firstStep', this._isFirstStep());
-            this.set('lastStep', this._isLastStep());
+            this.set('firstStep', true);
+            this.set('lastStep', false);
+            this.set('finish', false);
         },
 
 
         /*
         ** Private API
         */
+
+        _setFinish: function(isFinished) {
+            this.set('finish', isFinished);
+        },
 
         _updateSteps: function(forward) {
             forward ? this.step++ : this.step--;
@@ -243,7 +272,7 @@
         },
 
         _isLastStep: function() {
-            return this.step === (this.questions.length - 1);
+            return this.step >= (this.questions.length - 1);
         },
 
         _isFirstStep: function() {
@@ -278,7 +307,6 @@
 
             this.set('newdata.language', language);
             this.fire('iron-signal', {name: 'createprojects'});
-            this.set('selected', 1);
         }
 
     });
