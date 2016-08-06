@@ -24,4 +24,4 @@ function Temporary() {
 
 }
 
-module.exports.Temporary = Temporary;
+module.exports = Temporary();

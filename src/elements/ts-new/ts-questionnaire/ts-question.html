@@ -15,14 +15,19 @@
             margin-top: 1.5rem;
             --paper-input-container-label: {
                 font-size: 24px;
+                line-height: 26px;
             };
             --paper-input-container-input: {
                 margin-top: 1rem;
             }
         }
 
-        input[required] {
-            font-weight: 500;
+        paper-input.required {
+            --paper-input-container-label: {
+                font-size: 24px;
+                line-height: 26px;
+                font-weight: bold;
+            };
         }
 
         ts-radio-group {
@@ -43,13 +48,13 @@
     <template>
                             
         <template is="dom-if" if="{{_isStringType(inputType)}}">
-            <paper-input name="{{qid}}" label="{{label}}" always-float-label placeholder="{{help}}" required="{{required}}" error-message="{{errorMessage}}" class="{{_isRequiredClass(required)}}"></paper-input>
+            <paper-input id="{{qid}}" name="{{qid}}" label="{{_buildLabel(sort, text, required)}}" always-float-label placeholder="{{help}}" required="{{required}}" error-message="{{errorMessage}}" class$="{{_isRequiredClass(required)}}" disabled="{{disabled}}"></paper-input>
         </template>
 
         <template is="dom-if" if="{{_isBooleanType(inputType)}}">
-            <ts-radio-group selected="" attr-for-selected="value" label="{{label}}" required="{{required}}" error-message="{{errorMessage}}" class="{{_isRequiredClass(required)}}" required="{{required}}">
-                <paper-radio-button name="{{qid}}" value="yes">Yes</paper-radio-button>
-                <paper-radio-button name="{{qid}}" value="no">No</paper-radio-button>
+            <ts-radio-group id="{{qid}}" name="{{qid}}" selected="" attr-for-selected="value" label="{{_buildLabel(sort, text, required)}}" required="{{required}}" error-message="{{errorMessage}}" required="{{required}}" class$="{{_isRequiredClass(required)}}" disabled="{{disabled}}">
+                <paper-radio-button name="{{qid}}" value="true" disabled="{{disabled}}">Yes</paper-radio-button>
+                <paper-radio-button name="{{qid}}" value="false" disabled="{{disabled}}">No</paper-radio-button>
             </ts-radio-group>
         </template>
 
@@ -66,18 +71,38 @@
         ],
 
         properties: {
-            question: {
-                type: Object
+            disabled: {
+                type: Boolean
             }
         },
 
-        ready: function() {
-            console.log(this.qid);
+        attached: function() {
+            this.disabled = this._isDependent(this.dependsOn);
+            this.disabled && this._addListener(this.dependsOn);
         },
 
         validate: function() {
             var el = this.querySelector('paper-input') || this.querySelector('ts-radio-group');
             return el.validate();
+        },
+
+        reset: function() {
+            var el = this.querySelector('paper-input');
+
+            if (el) {
+                el.value = '';
+                // Fire change event if other questions depend on this
+                !this.dependsOn && el.fire('change');
+            } else {
+                this.querySelector('ts-radio-group').reset();
+            }
+        },
+
+        _addListener: function(dependsOn) {
+            var _this = this;
+            document.getElementById(dependsOn).addEventListener('change', function(e) {
+                _this.disabled = !e.target.value;
+            });
         },
 
         _isStringType: function(inputType) {
@@ -88,8 +113,16 @@
             return inputType === 'boolean';
         },
 
+        _buildLabel: function(sort, text, required) {
+            return sort + '. ' + text + (required ? ' *' : '');
+        },
+
         _isRequiredClass: function(required) {
             return required ? 'required' : '';
+        },
+
+        _isDependent: function(dependsOn) {
+            return dependsOn !== null;
         }
 
     });

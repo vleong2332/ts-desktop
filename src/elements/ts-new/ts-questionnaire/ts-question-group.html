@@ -13,7 +13,7 @@
     <template>
 
         <template is="dom-repeat" items="[[group]]" as="question">                
-            <ts-question qid="{{question.id}}" input-type="{{question.input_type}}" label="{{question.sort}}. {{question.text}}" required="{{question.required}}" help="{{question.help}}"" error-message="Required"></ts-question>
+            <ts-question qid="{{question.id}}" input-type="{{question.input_type}}" sort="{{question.sort}}" text="{{question.text}}" required="{{question.required}}" help="{{question.help}}"" depends-on="{{question.depends_on}}" error-message="Required" ></ts-question>
         </template>     
 
     </template>
@@ -43,6 +43,14 @@
 
             return questions.every(function(q) {
                 return q.validate();
+            });
+        },
+
+        reset: function() {
+            var questions = Array.prototype.slice.call(this.querySelectorAll('ts-question'));
+            
+            return questions.forEach(function(q) {
+                q.reset();
             });
         }
 
