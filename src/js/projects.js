@@ -184,6 +184,19 @@ function ProjectsManager(dataManager, configurator, reporter, git, migrator) {
                 });
         },
 
+        saveTempLanguageInfo: function (meta) {
+            var paths = utils.makeProjectPaths(targetDir, meta),
+                filePath = path.join(paths.projectDir, meta.temporary_language.temp_code + '.json');
+
+            console.log('filePath', filePath);
+
+            return write(filePath, toJSON(meta.temporary_language))
+                .catch(function (err) {
+                    reporter.logError(err);
+                    throw "Unable to write temporary language info.";
+                });
+        },
+
         createTargetTranslation: function (translation, meta, user) {
             var mythis = this;
             var paths = utils.makeProjectPaths(targetDir, meta);
@@ -215,6 +228,19 @@ function ProjectsManager(dataManager, configurator, reporter, git, migrator) {
                 .then(setLicense())
                 .then(function () {
                     return mythis.saveTargetManifest(meta);
+                })
+                .then(function(translation) {
+                    if (meta.temporary_language) {
+                        console.log('not null', meta.temporary_language);
+                        return mythis.saveTempLanguageInfo(meta)
+                        .then(function() {
+                            return translation;
+                        });
+                    } else {
+                        console.log('null', meta);
+                        return translation;
+                    }
+                    
                 })
                 .then(makeChapterDirs(translation))
                 .then(updateChunks(translation))

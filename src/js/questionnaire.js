@@ -111,10 +111,11 @@ function Questionnaire(configurator, languageSlug) {
                         toBeWritten = JSON.stringify(data, null, 2);
                         
                     return utils.fs.writeFile(filePath, toBeWritten).then(function() {
-                        return {
-                            id: data.temp_code,
-                            name: data.answers[data.data_fields['ln']].text
-                        };
+                        // return {
+                        //     id: data.temp_code,
+                        //     name: data.answers[data.data_fields['ln']].text
+                        // };
+                        return data;
                     });
                 });
         },

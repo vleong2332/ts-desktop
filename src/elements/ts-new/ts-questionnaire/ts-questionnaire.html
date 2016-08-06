@@ -230,7 +230,7 @@
             answersObj = App.questionnaire.sanitize(answersObj);
 
             App.questionnaire.save(user, answersObj).then(function(data) {
-                _this._store(data.id, data.name);
+                _this._store(data);
                 _this._updateSteps(true);
                 _this._setFinish(true);
                 // Disable the next and previous arrow buttons
@@ -295,10 +295,11 @@
             return answersObj;
         },
 
-        _store: function(id, name) {
+        _store: function(data) {
+            console.log('storing', data);
             var language = {
-                id: id,
-                name: name,
+                id: data.temp_code,
+                name: data.answers[App.questionnaire.dataFields.ln].text,
                 direction: "ltr"
             };
 
@@ -306,6 +307,7 @@
             //    available next time from the list.
 
             this.set('newdata.language', language);
+            this.set('newdata.tempLanguage', data);
             this.fire('iron-signal', {name: 'createprojects'});
         }
 

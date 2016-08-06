@@ -243,11 +243,13 @@
         },
 
         createproject: function () {
+            console.log('createproject', this.newdata);
             var mythis = this;
             var project = this.newdata.project;
             var language = this.newdata.language;
             var typedata = this.newdata.typedata;
             var projectarray = this.projectlist;
+            var tempLanguage = this.newdata.tempLanguage;
 
             mythis.set('options', {});
             mythis.set('options.body', "Creating project. Please wait...");
@@ -264,9 +266,12 @@
                 "translators": [],
                 "source_translations": [],
                 "finished_chunks": [],
-                "parent_draft": {}
+                "parent_draft": {},
+                "temporary_language": tempLanguage
             };
+            console.log('newprojectmanifest', newprojectmanifest);
             var newprojectmeta = App.projectsManager.updateManifestToMeta(newprojectmanifest);
+            console.log('newprojectmeta', newprojectmeta);
 
             if (newprojectmeta === null) {
                 mythis.set('options.title', "Unknown Error");
