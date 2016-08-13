@@ -8,7 +8,8 @@ let path = require('path'),
     sanitizer = require('sanitizer'),
     uuid = require('node-uuid'),
     temp = require('./temporary'),
-    utils = require('./lib/utils');
+    utils = require('./lib/utils'),
+    moment = require('moment');
 
 
 function Questionnaire(configurator, languageSlug) {
@@ -78,13 +79,7 @@ function Questionnaire(configurator, languageSlug) {
             let _this = this,
                 dirPath = configurator.getUserPath('datalocation', 'new_languages'),
                 ext = '.json',
-                date = new Date(),
-                timeStamp = date.getFullYear().toString() +
-                    App.utils.padZero(date.getMonth() + 1) +
-                    App.utils.padZero(date.getDate()) +
-                    App.utils.padZero(date.getHours()) +
-                    App.utils.padZero(date.getMinutes()) +
-                    App.utils.padZero(date.getSeconds());
+                timeStamp = moment().format("YYYYMMDDHHmmss");
 
             return temp.newCode()
                 .then(function(tempCode) {
@@ -111,10 +106,6 @@ function Questionnaire(configurator, languageSlug) {
                         toBeWritten = JSON.stringify(data, null, 2);
                         
                     return utils.fs.writeFile(filePath, toBeWritten).then(function() {
-                        // return {
-                        //     id: data.temp_code,
-                        //     name: data.answers[data.data_fields['ln']].text
-                        // };
                         return data;
                     });
                 });
