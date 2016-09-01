@@ -243,7 +243,6 @@
         },
 
         createproject: function () {
-            console.log('createproject', this.newdata);
             var mythis = this;
             var project = this.newdata.project;
             var language = this.newdata.language;
@@ -269,9 +268,7 @@
                 "parent_draft": {},
                 "temporary_language": tempLanguage
             };
-            console.log('newprojectmanifest', newprojectmanifest);
             var newprojectmeta = App.projectsManager.updateManifestToMeta(newprojectmanifest);
-            console.log('newprojectmeta', newprojectmeta);
 
             if (newprojectmeta === null) {
                 mythis.set('options.title', "Unknown Error");

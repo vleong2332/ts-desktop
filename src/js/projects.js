@@ -231,13 +231,11 @@ function ProjectsManager(dataManager, configurator, reporter, git, migrator) {
                 })
                 .then(function(translation) {
                     if (meta.temporary_language) {
-                        console.log('not null', meta.temporary_language);
                         return mythis.saveTempLanguageInfo(meta)
                         .then(function() {
                             return translation;
                         });
                     } else {
-                        console.log('null', meta);
                         return translation;
                     }
                     

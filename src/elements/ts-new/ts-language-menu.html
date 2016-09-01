@@ -208,6 +208,7 @@
 
         store: function (e) {
             this.set('newdata.language', e.model.language);
+            this.set('newdata.tempLanguage', null);
   
             if (this.changedata.changing) {
                 if (this.newdata.language.id !== this.changedata.oldmeta.target_language.id) {

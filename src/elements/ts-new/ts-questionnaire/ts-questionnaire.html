@@ -104,12 +104,13 @@
 
             <paper-material class="questions">
                 <div class="questions-title">
-                    <template is="dom-if" if="{{!finish}}">
+                    <!-- <template is="dom-if" if="{{!finish}}">
                         <h2 class="steps">Step <span>{{_baseOne(step)}}</span> of <span>{{questions.length}}</span></h2>
                     </template>
                     <template is="dom-if" if="{{finish}}">
                         <h2 class="finish">Success!</span></h2>
-                    </template>
+                    </template> -->
+                    <h2>{{title}}</h2>
                 </div>
                 <div class="questions-body">
                     <neon-animated-pages selected="{{step}}" exit-animation="scale-down-animation" entry-animation="scale-up-animation">
@@ -153,6 +154,10 @@
             Polymer.NeonAnimatableBehavior
         ],
 
+        observers: [
+            '_setTitle(finish, step)'
+        ],
+
         properties: {
             selected: {
                 notify: true
@@ -164,6 +169,10 @@
                 notify: true
             },
             currentuser: {
+            },
+            title: {
+                type: String,
+                value: ''
             },
             questions: {
                 type: Array,
@@ -197,6 +206,7 @@
 
         ready: function() {
             this.questions = App.questionnaire.questions;
+            this._setTitle();
         },
 
         /*
@@ -205,6 +215,7 @@
 
         cancel: function () {
             this.set('selected', 0);
+            this.reset();
         },
 
         next: function() {
@@ -260,6 +271,14 @@
         /*
         ** Private API
         */
+
+        _setTitle: function() {
+            if (this.finish) {
+                this.title = 'Success!';
+            } else {
+                this.title = 'Step ' + this._baseOne(this.step) + ' of ' + this.questions.length;
+            }
+        },
 
         _setFinish: function(isFinished) {
             this.set('finish', isFinished);
